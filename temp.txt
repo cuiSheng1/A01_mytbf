@@ -1,0 +1,49 @@
+
+
+g++ -c  -fPIC mytbf.cpp -o mytbf.o
+
+
+
+g++ -shared -o libmytbf.so mytbf.o
+
+
+
+
+g++ tcpServer.cpp -o main -I ./ -L ./ -lmytbf
+
+g++ -shared -fPIC mymethod.cpp -o libmymethodso.so
+
+
+---==========================================
+
+CC=g++
+CFLAGS= -Wall -g -O -fPIC
+INCLUDE= -I
+
+TARGET=libmytbf.so
+OBJS=mytbf.o
+SRCS=mytbf.cpp
+
+all: $(TARGET) client server
+
+
+$(TARGET):$(OBJS)
+	$(CC) -shared -fPIC -o $(TARGET) $(OBJS)
+
+$(OBJS):$(SRCS)
+	$(CC) $(CFLAGS) -c $(SRCS)
+
+
+client: tcpClient.o
+	$(CC) $^ -o $@
+
+server: tcpServer.o mytbf.h
+	$(CC) $^ -lmytbf -L ./ -o $@
+
+
+
+
+
+
+clean:
+	rm -rf *.o client server $(TARGET)
